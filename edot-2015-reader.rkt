@@ -14,11 +14,19 @@
     (define edot-2015-lexer
       (lexer
        [(:or whitespace "\n") (token lexeme #:skip? #t)]
-       [(:seq (char-set "IVX")) (token 'HOM-NUM lexeme)]
-       [(:+ upper-case) (token 'UPPER-CASE lexeme)]
-       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-"))
+       [(:seq (:+ (char-set "IVX")) (:* ",")) (token 'HOM-NUM lexeme)]
+       [(:+ (:or upper-case "-")) (token 'UPPER-CASE lexeme)]
+       [(:seq (:or "ы" "и") ".") (token 'POS lexeme)]
+       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "!" "\u00AD" ":" "?"))
         (token 'W lexeme)]
        ["." (token 'DOT lexeme)]
-       ["Мәдәни җомга" (token 'BIBL lexeme)]))
+       [(:or "Мәдәни җомга"
+             "Һ.Такташ"
+             "Ф.Әмирхан."
+             "Г.Ибраһимов"
+             "Казан утлары"
+             "Г.Шәрипова")
+        (token 'BIBL lexeme)]
+       [(:seq (:+ (char-set "0123456789")) ")") (token 'SENSE-NUM lexeme)]))
     (edot-2015-lexer port))
   next-token)
