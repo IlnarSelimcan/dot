@@ -16,16 +16,22 @@
        [(:or whitespace "\n") (token lexeme #:skip? #t)]
        [(:seq (:+ (char-set "IVX")) (:* ",")) (token 'HOM-NUM lexeme)]
        [(:+ (:or upper-case "-")) (token 'UPPER-CASE lexeme)]
-       [(:seq (:or "ы" "и") ".") (token 'POS lexeme)]
-       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "!" "\u00AD" ":" "?"))
-        (token 'W lexeme)]
+       [(:or "а." "бәйл." "бәйл. сүз." "и." "иярт." "кер. сүз" "кис."
+             "мод. сүз." "мод. ф." "мөн." "рәв." "с." "сан" "терк." "ф."
+             "хәб. сүз" "ы." "энд." "ярд.")
+        (token 'POS lexeme)]
        ["." (token 'DOT lexeme)]
+       [(:+ (char-set "!?")) (token 'OTHEREOSMARK lexeme)]
+       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "\u00AD" ":"))
+        (token 'W lexeme)]
        [(:or "Мәдәни җомга"
              "Һ.Такташ"
-             "Ф.Әмирхан."
+             "Ф.Әмирхан"
              "Г.Ибраһимов"
              "Казан утлары"
-             "Г.Шәрипова")
+             "Г.Шәрипова"
+             "Г.Шәрипов"
+             "Н.Дәүли")
         (token 'BIBL lexeme)]
        [(:seq (:+ (char-set "0123456789")) ")") (token 'SENSE-NUM lexeme)]))
     (edot-2015-lexer port))

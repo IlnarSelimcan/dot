@@ -1,14 +1,15 @@
 #lang brag
 
 dictionary : entry+
-entry : form [hom-num] [form] [pos] sense+
-sense : (sense-num def /DOT cit*)*
-      | (def /DOT cit*)
-cit : quote /DOT bibl
+entry : (form [hom-num] [form] [pos] sense)
+      | (form [hom-num] [form] [pos] senses+)
+sense: def /DOT cit*
+senses : (sense-num def /DOT cit*)
+cit : quote bibl
 form : UPPER-CASE
 hom-num : HOM-NUM
 def : (W | UPPER-CASE)*
-quote : (W | UPPER-CASE)*
-bibl : BIBL
+quote : ((W | UPPER-CASE | DOT)+ (DOT | OTHEREOSMARK)+)+
+bibl : BIBL [/DOT]
 pos : POS
 sense-num : SENSE-NUM
