@@ -1,4 +1,8 @@
 #lang br/quicklang
+
+(provide read-syntax)
+
+(require brag/support)
 (require "edot-2015-parser.rkt")
 
 (define (read-syntax path port)
@@ -6,33 +10,52 @@
   (define module-datum `(module bf-mod "edot-2015-expander.rkt"
                           ,parse-tree))
   (datum->syntax #f module-datum))
-(provide read-syntax)
 
-(require brag/support)
+
 (define (make-tokenizer port)
   (define (next-token)
     (define edot-2015-lexer
       (lexer
-       [(:or whitespace "\n") (token lexeme #:skip? #t)]
-       [(:seq (:+ (char-set "IVX")) (:* ",")) (token 'HOM-NUM lexeme)]
-       [(:+ (:or upper-case "-")) (token 'UPPER-CASE lexeme)]
        [(:or "а." "бәйл." "бәйл. сүз." "и." "иярт." "кер. сүз" "кис."
              "мод. сүз." "мод. ф." "мөн." "рәв." "с." "сан" "терк." "ф."
              "хәб. сүз" "ы." "энд." "ярд.")
         (token 'POS lexeme)]
+       ["мәгъ." (token 'CONV lexeme)]
+       [(:or "алб." "амхар" "әрм." "баконго" "бурят" "венг." "гар." "голл."
+             "гр." "груз." "ингл." "исланд" "исп." "ит." "кельт" "кечуа"
+             "коми" "кыт." "лат." "литв." "малая" "мар." "монг." "мордв."
+             "нем." "пол." "португ." "румын" "рус" "саам" "санскр." "сканд."
+             "слав." "тамил" "тат." "төрек" "төрки" "тунг." "тупи" "удм."
+             "уйг." "укр." "үзб." "фар." "фин" "фин-угор" "фр." "һинд" "чех."
+             "эст." "як." "яп." "яһүд")
+        (token 'ETYM lexeme)]
+       [(:or "авиа." "агроэкол." "анат." "археол." "архит." "астр." "а.х."
+             "әд." "әрл." "биол." "биохим." "бор." "бот." "вет." "гади с."
+             "геогр." "геол." "геом." "грам." "диал." "дини" "диңгез."
+             "жарг." "җыр" "зоол." "икът." "информ." "ирк." "ирон." "иск."
+             "иҗт." "карг." "кимс." "кино" "кит." "комп." "кулин." "күч."
+             "лингв." "лог." "мат." "махс." "мед." "метеор." "микробиол."
+             "минер." "миф." "муз." "мыск." "неол." "нәфр." "пед." "психол."
+             "радио" "рәсм." "ритор." "сәнг." "сәяси" "сир." "сөйл." "спорт"
+             "сын." "тар." "тасв." "театр" "тех." "типогр." "тирг." "төзел."
+             "туп." "фарм." "физ." "физиол." "филос." "финанс." "фольк."
+             "фото." "функ." "хим." "хуплм." "хупл." "хурл." "хәрби"
+             "шаярт." "шелт." "шигъ." "шөб." "эвф." "энд." "электро."
+             "эпис." "этн." "юг." "юр.")
+        (token 'USAGE lexeme)]
+       ["к." (token 'XR lexeme)]       
+       [(:or "Мәдәни җомга" "Казан утлары" "Әкият" "Биология" "Ботаника"
+             "Гали Рәхим"
+             (:seq upper-case "." upper-case (:* lower-case)))  ;; "Ф.Әмирхан"
+        (token 'BIBL lexeme)]
+       [(:or whitespace "\n") (token lexeme #:skip? #t)]
+       [(:seq (:+ (char-set "IVX")) (:* ",")) (token 'HOM-NUM lexeme)]
+       [(:+ (:or upper-case "-" "́")) (token 'UPPER-CASE lexeme)]
        ["." (token 'DOT lexeme)]
        [(:+ (char-set "!?")) (token 'OTHEREOSMARK lexeme)]
-       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "\u00AD" ":"))
+       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "\u00AD" ":" ";"))
         (token 'W lexeme)]
-       [(:or "Мәдәни җомга"
-             "Һ.Такташ"
-             "Ф.Әмирхан"
-             "Г.Ибраһимов"
-             "Казан утлары"
-             "Г.Шәрипова"
-             "Г.Шәрипов"
-             "Н.Дәүли")
-        (token 'BIBL lexeme)]
-       [(:seq (:+ (char-set "0123456789")) ")") (token 'SENSE-NUM lexeme)]))
+       [(:seq (:+ (char-set "0123456789")) (:or "." ")")) (token 'SENSE-NUM lexeme)]
+       ["◊" (token 'PHRASEMARK lexeme)]))
     (edot-2015-lexer port))
   next-token)
