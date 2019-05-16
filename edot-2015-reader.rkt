@@ -45,7 +45,7 @@
         (token 'USAGE lexeme)]
        ["к." (token 'XR lexeme)]       
        [(:or "Мәдәни җомга" "Казан утлары" "Әкият" "Биология" "Ботаника"
-             "Гали Рәхим"
+             "Гали Рәхим" "Кызыл таң"
              (:seq upper-case "." upper-case (:* lower-case)))  ;; "Ф.Әмирхан"
         (token 'BIBL lexeme)]
        [(:or whitespace "\n") (token lexeme #:skip? #t)]
@@ -53,9 +53,11 @@
        [(:+ (:or upper-case "-" "́")) (token 'UPPER-CASE lexeme)]
        ["." (token 'DOT lexeme)]
        [(:+ (char-set "!?")) (token 'OTHEREOSMARK lexeme)]
-       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "\u00AD" ":" ";"))
+       [(:+ (:or alphabetic numeric "–" "«" "»" "," "-" "\u00AD" ":" ";" "["
+                 "]"))
         (token 'W lexeme)]
-       [(:seq (:+ (char-set "0123456789")) (:or "." ")")) (token 'SENSE-NUM lexeme)]
+       [(:seq (:+ (char-set "0123456789")) (:or "." ")"))
+        (token 'SENSE-NUM lexeme)]
        ["◊" (token 'PHRASEMARK lexeme)]))
     (edot-2015-lexer port))
   next-token)
