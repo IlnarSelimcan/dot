@@ -1,5 +1,8 @@
 We say thank you to
 
 - Sharapat Kalabaev (github.com/sharapat), Google Summer of Code student in 2019
-  at Apertium, for correcting Uzbek entry words in the OCR'ed text of the 1988
-  Uzbek-Russian dictionary by Akobirov & Mikhailov.
+  at Apertium, for:
+  - correcting Uzbek entry words in the OCR'ed text of the 1988
+    Uzbek-Russian dictionary by Akobirov & Mikhailov.
+  - correcting Karakalpak entry words in the OCR'ed text of the 1958
+    Karakalpak-Russian dictionary by Baskakov (ed.) et al
