@@ -74,6 +74,7 @@ def main2(ws, memorized):
     """
 
     if memorized == 0 or memorized == BATCH_SIZE:
+        memorized = 0
         train_data = []
         for label, word, rest in ws.done:
             train_data.append((word_rest2featvec(word, rest), label))
