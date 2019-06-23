@@ -38,7 +38,7 @@ PATH_TO_MEGAM_BINARY = "/home/selimcan/local/megam-64"
 nltk.classify.megam.config_megam(PATH_TO_MEGAM_BINARY)
 
 ## model gets retrained after feedback for BATCH_SIZE entries is provided
-BATCH_SIZE = 10
+BATCH_SIZE = 80
 
 BACKUP = "ws.pickle"
 
@@ -88,7 +88,8 @@ def main2(ws, memorized):
 
     _, word, rest = ws.todo[0]
     guess = model.classify(word_rest2featvec(word, rest))
-    print(guess, word, rest, sep='\t')
+    prob = model.prob_classify(word_rest2featvec(word, rest)).prob(guess)
+    print(prob, guess, word, rest, sep='\t')
     feedback = input("\n'ok' if guessed label correct, else correct label or 's' to skip: ")
     if feedback.lower() == 'ok':
         main2(WS(model, ws.done + [(guess, word, rest)], ws.todo[1:]), memorized+1)
