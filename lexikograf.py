@@ -142,31 +142,40 @@ if __name__ == '__main__':
         ws0 = WS(False, done, todo)
     main2(ws0, 0)
 
-## just for future reference
+## just for future reference, this is how kaa words can be labeled and stemmed
 
-#In [176]: with open('/tmp/toadd', 'w') as outf: 
-#     ...:     for label, word, rest in ws.done: 
-#     ...:         if ',' in label: 
-#     ...:             for l in label.split(','): 
-#     ...:                 s = label_word2stem(l, word) 
-#     ...:                 print(s, l, sep='\t', file=outf) 
-#     ...:         else: 
-#     ...:             s = label_word2stem(label, word) 
-#     ...:             print(s, label, sep='\t', file=outf) 
-#     ...:              
-#     ...:          
-#
-#     In [177]: with open('/tmp/toadd', 'a') as outf: 
-#     ...:     for _, word, rest in ws.todo[27:]: 
-#     ...:         fv = word_rest2featvec(word, rest) 
-#     ...:         label = ws.model.classify(fv) 
-#     ...:         probs = ws.model.prob_classify(fv) 
-#     ...:         if ',' in label: 
-#     ...:             for l in label.split(','): 
-#     ...:                 s = label_word2stem(l, word) 
-#     ...:                 print(s, l, str(probs.prob(label)), sep='\t', file=outf) 
-#     ...:         else: 
-#     ...:             s = label_word2stem(label, word) 
-#     ...:             print(s, label, str(probs.prob(label)), sep='\t', file=outf) 
-#     ...:              
-#     ...:                             
+def label_word2stem(l, w):
+    if label.startswith('V-'): 
+        if word.endswith('ыў'): 
+            return w[:-2] 
+        elif word.endswith('ў'): 
+            return w[:-1]
+        else:
+            return w
+    elif label == 'V-TV-CAUS' and word.endswith('ыл'): 
+        return w[:-2] 
+    else: 
+        return w 
+
+with open('/tmp/toadd', 'w') as outf: 
+    for label, word, rest in ws.done: 
+        if ',' in label: 
+            for l in label.split(','): 
+                s = label_word2stem(l, word) 
+                print(s, l, sep='\t', file=outf) 
+        else: 
+            s = label_word2stem(label, word) 
+            print(s, label, sep='\t', file=outf) 
+
+with open('/tmp/toadd', 'a') as outf:
+    for _, word, rest in ws.todo[31:]:
+        fv = word_rest2featvec(word, rest)
+        label = ws.model.classify(fv) 
+        probs = ws.model.prob_classify(fv)
+        if ',' in label:
+            for l in label.split(','):
+                s = label_word2stem(l, word)
+                print(s, l, str(probs.prob(label)), sep='\t', file=outf) 
+        else:
+            s = label_word2stem(label, word)
+            print(s, label, str(probs.prob(label)), sep='\t', file=outf)
