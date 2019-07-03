@@ -145,15 +145,26 @@ if __name__ == '__main__':
 ## just for future reference, this is how kaa words can be labeled and stemmed
 
 def label_word2stem(l, w):
-    if label.startswith('V-'): 
-        if word.endswith('ыў'): 
+    if label == 'V-TV-CAUS':
+        if w.endswith('ılıw'):
+            return w[:-4]
+        elif w.endswith('ıw'): 
             return w[:-2] 
-        elif word.endswith('ў'): 
+        elif w.endswith('ıl-'):
+            return w[:-3]
+        elif w.endswith('ıl'):
+            return w[:-2]
+        else:
+            return w
+    elif label.startswith('V-'): 
+        if w.endswith('law'): 
+            return w[:-1] 
+        if w.endswith('ıw'): 
+            return w[:-2] 
+        elif word.endswith('w'): 
             return w[:-1]
         else:
             return w
-    elif label == 'V-TV-CAUS' and word.endswith('ыл'): 
-        return w[:-2] 
     else: 
         return w 
 
