@@ -135,6 +135,8 @@ if __name__ == '__main__':
             done, todo = [], []
             for line in inf: 
                 line = line.strip()
+                if line.startswith('\t'):
+                    continue
                 try:
                     label, word, rest = line.split('\t')
                     done.append((label, word, rest))
