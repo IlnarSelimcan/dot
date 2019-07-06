@@ -44,12 +44,13 @@ BACKUP = "ws.pickle"
 
 DICTIONARY = sys.argv[1]
 
+
 ###################
 ## Data definitions
 
 
 WS = namedtuple('WS', ['model', 'done', 'todo'])
-## WorldState is WS(nltk.classify.ClassifierI, (listof Entry), (listof Entry)
+## WorldState is WS(nltk.classify.ClassifierI, (listof Entry), (listof Entry))
 ## interpretation: classfier, labeled entries, unlabeled entries
 
 ## Entry is (tupleof Label, String, String)
@@ -65,12 +66,16 @@ WS = namedtuple('WS', ['model', 'done', 'todo'])
 ## Functions
 
 
-def main2(ws, memorized):
-    """ WS -> WS 
+def main(ws, memorized):
+    """ WS Integer -> WS Integer 
 
     Train a classifier based on labeled entries in ws0.done, and iterate over
     unlabeled entries in ws0.todo, asking the user for feedback and re-training
     the model each time such feedback is provided.
+
+    ws : current WorldState
+    memorized : number of entries labeled after the last re-training of the
+                classifier
     """
 
     if memorized == 0 or memorized == BATCH_SIZE:
@@ -79,8 +84,8 @@ def main2(ws, memorized):
         for label, word, rest in ws.done:
             train_data.append((word_rest2featvec(word, rest), label))
         model = nltk.classify.MaxentClassifier.train(train_data,
-                                                          algorithm='megam',
-                                                          trace=0, max_iter=15)
+                                                     algorithm='megam',
+                                                     trace=0, max_iter=15)
         with open(BACKUP, 'wb') as outf:
             pickle.dump(ws, outf)
     else:
@@ -90,13 +95,13 @@ def main2(ws, memorized):
     guess = model.classify(word_rest2featvec(word, rest))
     prob = model.prob_classify(word_rest2featvec(word, rest)).prob(guess)
     print(prob, guess, word, rest, sep='\t')
-    feedback = input("\n'ok' if guessed label correct, else correct label or 's' to skip: ")
+    feedback = input("\n'ok' or 'Enter' if guessed label correct, else correct label or 's' to skip: ")
     if feedback.lower() == 'ok' or feedback == '':
-        main2(WS(model, ws.done + [(guess, word, rest)], ws.todo[1:]), memorized+1)
+        main(WS(model, ws.done + [(guess, word, rest)], ws.todo[1:]), memorized+1)
     elif feedback.lower() == 's':
-        main2(WS(model, ws.done, ws.todo[1:]), memorized)
+        main(WS(model, ws.done, ws.todo[1:]), memorized)
     else:
-        main2(WS(model, ws.done + [(feedback.upper(), word, rest)], ws.todo[1:]), memorized+1)
+        main(WS(model, ws.done + [(feedback.upper(), word, rest)], ws.todo[1:]), memorized+1)
 
 def word_rest2featvec(word, rest):
     """String String -> dictionary String->String)
@@ -140,53 +145,53 @@ if __name__ == '__main__':
                     except ValueError:
                         pass
         ws0 = WS(False, done, todo)
-    main2(ws0, 0)
+    main(ws0, 0)
 
 ## just for future reference, this is how kaa words can be labeled and stemmed
-
-def label_word2stem(l, w):
-    if label == 'V-TV-CAUS':
-        if w.endswith('ılıw'):
-            return w[:-4]
-        elif w.endswith('ıw'): 
-            return w[:-2] 
-        elif w.endswith('ıl-'):
-            return w[:-3]
-        elif w.endswith('ıl'):
-            return w[:-2]
-        else:
-            return w
-    elif label.startswith('V-'): 
-        if w.endswith('law'): 
-            return w[:-1] 
-        if w.endswith('ıw'): 
-            return w[:-2] 
-        elif word.endswith('w'): 
-            return w[:-1]
-        else:
-            return w
-    else: 
-        return w 
-
-with open('/tmp/toadd', 'w') as outf: 
-    for label, word, rest in ws.done: 
-        if ',' in label: 
-            for l in label.split(','): 
-                s = label_word2stem(l, word) 
-                print(s, l, sep='\t', file=outf) 
-        else: 
-            s = label_word2stem(label, word) 
-            print(s, label, sep='\t', file=outf) 
-
-with open('/tmp/toadd', 'a') as outf:
-    for _, word, rest in ws.todo[31:]:
-        fv = word_rest2featvec(word, rest)
-        label = ws.model.classify(fv) 
-        probs = ws.model.prob_classify(fv)
-        if ',' in label:
-            for l in label.split(','):
-                s = label_word2stem(l, word)
-                print(s, l, str(probs.prob(label)), sep='\t', file=outf) 
-        else:
-            s = label_word2stem(label, word)
-            print(s, label, str(probs.prob(label)), sep='\t', file=outf)
+## 
+## def label_word2stem(l, w):
+##     if label == 'V-TV-CAUS':
+##         if w.endswith('ılıw'):
+##             return w[:-4]
+##         elif w.endswith('ıw'): 
+##             return w[:-2] 
+##         elif w.endswith('ıl-'):
+##             return w[:-3]
+##         elif w.endswith('ıl'):
+##             return w[:-2]
+##         else:
+##             return w
+##     elif label.startswith('V-'): 
+##         if w.endswith('law'): 
+##             return w[:-1] 
+##         if w.endswith('ıw'): 
+##             return w[:-2] 
+##         elif word.endswith('w'): 
+##             return w[:-1]
+##         else:
+##             return w
+##     else: 
+##         return w 
+## 
+## with open('/tmp/toadd', 'w') as outf: 
+##     for label, word, rest in ws.done: 
+##         if ',' in label: 
+##             for l in label.split(','): 
+##                 s = label_word2stem(l, word) 
+##                 print(s, l, sep='\t', file=outf) 
+##         else: 
+##             s = label_word2stem(label, word) 
+##             print(s, label, sep='\t', file=outf) 
+## 
+## with open('/tmp/toadd', 'a') as outf:
+##     for _, word, rest in ws.todo[31:]:
+##         fv = word_rest2featvec(word, rest)
+##         label = ws.model.classify(fv) 
+##         probs = ws.model.prob_classify(fv)
+##         if ',' in label:
+##             for l in label.split(','):
+##                 s = label_word2stem(l, word)
+##                 print(s, l, str(probs.prob(label)), sep='\t', file=outf) 
+##         else:
+##             s = label_word2stem(label, word)
+##             print(s, label, str(probs.prob(label)), sep='\t', file=outf)
