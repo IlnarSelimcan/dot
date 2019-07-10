@@ -38,7 +38,7 @@ PATH_TO_MEGAM_BINARY = "/home/selimcan/local/megam-64"
 nltk.classify.megam.config_megam(PATH_TO_MEGAM_BINARY)
 
 ## model gets retrained after feedback for BATCH_SIZE entries is provided
-BATCH_SIZE = sys.argv[2]
+BATCH_SIZE = int(sys.argv[2])
 
 BACKUP = "ws.pickle"
 
