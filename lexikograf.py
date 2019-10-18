@@ -4,7 +4,7 @@
 ## Given a text file with a dictionary, where each line is of the following
 ## form:
 ##
-## [CommaSeparatedLabels] \tab entryWord \tab restOfTheEntry
+## [CommaSeparatedLabels \tab] entryWord \tab restOfTheEntry
 ##
 ## for example:
 ##
