@@ -1,0 +1,3 @@
+<TEI>
+  @(->html @doc)
+</TEI>
